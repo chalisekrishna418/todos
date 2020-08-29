@@ -1,0 +1,13 @@
+packages:
+  # List of package names (e.g granitic.ws) referenced by components in this file.
+  - github.com/graniticio/granitic/v2/ws/handler
+  - todos/endpoint
+components:
+  # Definition of components you want to be managed by Granitic
+  todoCreateLogic:
+    type: endpoint.TodoCreateLogic
+  todoCreateHandler:
+    type: handler.WsHandler
+    HTTPMethod: POST
+    PathPattern: "^/api/v1/create[/]?$"
+    Logic: ref:todoCreateLogic

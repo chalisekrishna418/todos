@@ -1,0 +1,4 @@
+bindings*
+todos
+go.sum
+*.log

@@ -1,0 +1,74 @@
+name: CI for the project
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+
+jobs:
+
+  build-and-test:
+    name: Builds and run unit tests
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+
+    - name: Download the project dependencies
+      run: go mod download
+
+    - name: install granitic dependencies
+      run: |
+        go install github.com/graniticio/granitic-yaml/v2
+        go install github.com/graniticio/granitic/v2/cmd/grnc-ctl
+        go install github.com/graniticio/granitic-yaml/v2/cmd/grnc-yaml-bind
+
+    - name: granitic-bind
+      run: export GOPATH=$(go env GOPATH) && grnc-yaml-bind
+
+    # Builds project
+    - name: Build the project for linux
+      run: export GOPATH=$(go env GOPATH) && go build -o todos-linux-x64 .
+      env:
+        GOOS: linux
+        GOARCH: amd64
+
+    - name: Build the project for macOS
+      run: export GOPATH=$(go env GOPATH) && go build -o todos-darwin-x64 .
+      env:
+        GOOS: darwin
+        GOARCH: amd64
+
+    # Run unit tests
+    - name: Test
+      run: go test ./... -cover
+
+    # Upload the artefacts
+    - uses: actions/upload-artifact@master
+      with:
+        name: todos-linux-x64
+        path: todos-linux-x64
+      if: ${{ github.ref == 'master' }}
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: todos-darwin-x64
+        path: todos-darwin-x64
+      if: ${{ github.ref == 'master' }}

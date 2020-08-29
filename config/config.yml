@@ -1,0 +1,11 @@
+# Configuration you want to make available to your components
+Facilities:
+  HTTPServer: true
+  JSONWs: true
+  RuntimeCtl: true
+HTTPServer:
+  Address: 0.0.0.0
+  Port: 3000
+  AccessLogging: true
+  AccessLog:
+    LogLinePreset: "framework"
