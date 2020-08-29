@@ -2,15 +2,17 @@ package endpoint
 
 import (
 	"context"
-	"log"
 
-	"github.com/google/uuid"
+	"todos/pkg/uuid"
+
+	"github.com/graniticio/granitic/v2/logging"
 	"github.com/graniticio/granitic/v2/ws"
 )
 
 //TodoCreateLogic logical requirements for creating a Todo
 type TodoCreateLogic struct {
-	TodoID string
+	Log  logging.Logger
+	UUID uuid.UUIDGenerator
 }
 
 //TodoCreateRequest request payload for creating a Todo
@@ -34,24 +36,19 @@ func (tdcl *TodoCreateLogic) Validate(ctx context.Context, errors *ws.ServiceErr
 }
 
 //ProcessPayload Processes request
-func (tdcl *TodoCreateLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, tdcr *TodoCreateRequest) {
-	uuid, err := uuid.NewRandom()
+func (tdcl *TodoCreateLogic) ProcessPayload(ctx context.Context, errors *ws.ServiceErrors, req *ws.Request, res *ws.Response, tdcr *TodoCreateRequest) {
+	uuid, err := tdcl.UUID.Generate()
+	if err != nil {
+		errors.AddNewError(ws.Client, "UUID_GENERATE_FAILED", "Error while generating TodoId")
+		errors.HTTPStatus = 500
+		// tdcl.Log.LogErrorf("Error while generating UUID : Error %v", err)
+		return
+	}
 	if tdcr.Status == "" {
 		tdcr.Status = "TODO"
 	}
-	if err != nil {
-		log.Fatal("[Error] Generating uuid")
-	}
+	res.HTTPStatus = 201
 	res.Body = map[string]string{
-		"TodoId": uuid.String(),
+		"TodoId": uuid,
 	}
-}
-
-func contains(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
 }

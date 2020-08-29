@@ -2,12 +2,17 @@ packages:
   # List of package names (e.g granitic.ws) referenced by components in this file.
   - github.com/graniticio/granitic/v2/ws/handler
   - todos/endpoint
+  - todos/pkg/uuid
 components:
   # Definition of components you want to be managed by Granitic
   todoCreateLogic:
     type: endpoint.TodoCreateLogic
+    UUID: ref:googleUUID
   todoCreateHandler:
     type: handler.WsHandler
     HTTPMethod: POST
     PathPattern: "^/api/v1/create[/]?$"
     Logic: ref:todoCreateLogic
+
+  googleUUID:
+    type: uuid.Generator
