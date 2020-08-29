@@ -2,7 +2,7 @@ package endpoint
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 	"github.com/graniticio/granitic/v2/ws"
@@ -40,7 +40,7 @@ func (tdcl *TodoCreateLogic) ProcessPayload(ctx context.Context, req *ws.Request
 		tdcr.Status = "TODO"
 	}
 	if err != nil {
-		fmt.Errorf("[Error] Generating uuid")
+		log.Fatal("[Error] Generating uuid")
 	}
 	res.Body = map[string]string{
 		"TodoId": uuid.String(),
