@@ -21,15 +21,15 @@ type CreateLogic struct {
 	UUID      uuid.UUIDGenerator
 }
 
-//TodoCreateRequest request payload for creating a Todo
-type TodoCreateRequest struct {
+//CreateRequest request payload for creating a Todo
+type CreateRequest struct {
 	Status string `json:"status"`
 	Item   string `json:"item"`
 }
 
 //Validate Validates the request
 func (tdcl *CreateLogic) Validate(ctx context.Context, errors *ws.ServiceErrors, req *ws.Request) {
-	tc := req.RequestBody.(*TodoCreateRequest)
+	tc := req.RequestBody.(*CreateRequest)
 	TodoStatus := []string{"TODO", "DONE"}
 	if tc.Item == "" {
 		errors.AddNewError(ws.Client, "EMPTY_ITEM", "Item is a required field")
@@ -42,7 +42,7 @@ func (tdcl *CreateLogic) Validate(ctx context.Context, errors *ws.ServiceErrors,
 }
 
 //ProcessPayload Processes request
-func (tdcl *CreateLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, tdcr *TodoCreateRequest) {
+func (tdcl *CreateLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, tdcr *CreateRequest) {
 	uuid, err := tdcl.UUID.Generate()
 	if err != nil {
 		tdcl.Log.LogErrorf("Error while generating UUID : Error %v", err)

@@ -28,8 +28,8 @@ func (mc mockCreator) Insert(string, Todo) error {
 	return mc.Err
 }
 
-func getTestTodoCreateRequest() TodoCreateRequest {
-	return TodoCreateRequest{
+func getTestTodoCreateRequest() CreateRequest {
+	return CreateRequest{
 		Item:   "Task 1",
 		Status: "TODO",
 	}

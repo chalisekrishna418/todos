@@ -9,10 +9,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+//MongoConnection Connection interface
 type MongoConnection interface {
 	Connect() (*mongo.Database, error)
 }
 
+//MongoDBManager db manager
 type MongoDBManager struct {
 	DBMgr MongoConnection
 }
