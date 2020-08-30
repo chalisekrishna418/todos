@@ -1,0 +1,115 @@
+openapi: 3.0.2
+info:
+  title: Todos API
+  description: This API specs is for todos App
+  termsOfService: ""
+  contact:
+    email: krishnachalise418@gmail.com
+  license:
+    name: N/A
+    url: N/A
+  version: 0.1.0
+tags:
+- name: Todo
+  description: Todo Management
+servers:
+- url: http://localhost:3000
+paths:
+  /api/v1/create:
+    post:
+      tags:
+      - Todo
+      summary: Creates a Todo Item
+      description: Creates a Todo Item with TODO status
+      operationId: createTodo
+      requestBody:
+        description: The request body to create TODO
+        x-name: createTodo
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createTodoSchema'
+        required: false
+      responses:
+        201:
+          description: Todo Created
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 55ba71da-4c4e-49f7-a030-a4a84a48f4b1
+              examples:
+                success:
+                  value:
+                    TodoId: "55ba71da-4c4e-49f7-a030-a4a84a48f4b1"
+        422:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/byFieldErrorSchema'
+              examples:
+                ByFieldErrorExample:
+                  $ref: '#/components/examples/createTodoValidationExample'
+        500:
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericErrorSchema'
+              examples:
+                internalErrorExample:
+                  $ref: '#/components/examples/internalErrorExample'
+
+components:
+  schemas:
+    baseErrorSchema:
+      type: object
+      properties:
+        Code:
+          type: string
+        Message:
+          type: string
+    genericErrorSchema:
+      type: object
+      properties:
+        General:
+          type: array
+          items:
+            $ref: '#/components/schemas/baseErrorSchema'
+    byFieldErrorSchema:
+      type: object
+      properties:
+        ByField:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/baseErrorSchema'
+    createTodoSchema:
+      type: object
+      properties:
+        item:
+          type: string
+        status:
+          type: string
+      example:
+        item: "complete task 1"
+        status: "TODO"
+
+  examples:
+    internalErrorExample:
+      value:
+        General:
+        - Code: H-500
+          Message: An unexpected error occurred.
+    createTodoValidationExample:
+      value:
+        ByField:
+        - name:
+          - Code: INVALID_ITEM
+            Message: Item can contain only alphabets and numbers
+          - Code: EMPTY_ITEM
+            Message: Item is a required field
+          - Code: INVALID_STATUS
+            Message: Status should either be DONE or TODO
