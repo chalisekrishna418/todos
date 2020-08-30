@@ -1,0 +1,19 @@
+packages:
+  # List of package names (e.g granitic.ws) referenced by components in this file.
+  - todos/endpoint/todo
+  - todos/pkg/mongodb
+
+components:
+  # Definition of components you want to be managed by Granitic
+
+  dbSessionManager:
+    type: mongodb.SessionManager
+    Host: conf:Service.Mongodb.Host
+    Port: conf:Service.Mongodb.Port
+    User: conf:Service.Mongodb.User
+    Password: conf:Service.Mongodb.Password
+    Database: conf:Service.Mongodb.Database
+
+  todosDBMgr:
+    type: todo.MongoDBManager
+    DBMgr: ref:dbSessionManager

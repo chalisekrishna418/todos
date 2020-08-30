@@ -1,0 +1,7 @@
+Service:
+  Mongodb:
+    Host: ""
+    Port: 27017
+    User: ""
+    Password: ""
+    Database: ""

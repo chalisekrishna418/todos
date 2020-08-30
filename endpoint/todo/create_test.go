@@ -1,4 +1,4 @@
-package endpoint
+package todo
 
 import (
 	"context"
@@ -11,6 +11,10 @@ import (
 	"github.com/graniticio/granitic/v2/ws"
 )
 
+type mockCreator struct {
+	Err error
+}
+
 type mockUUIDGenerator struct {
 	UUID string
 	Err  error
@@ -18,6 +22,10 @@ type mockUUIDGenerator struct {
 
 func (mg mockUUIDGenerator) Generate() (string, error) {
 	return mg.UUID, mg.Err
+}
+
+func (mc mockCreator) Insert(string, Todo) error {
+	return mc.Err
 }
 
 func getTestTodoCreateRequest() TodoCreateRequest {
@@ -31,7 +39,7 @@ func TestCreate_Validate(t *testing.T) {
 	log := logging.CreateAnonymousLogger("TestLogger", logging.Fatal)
 	t.Log("when Item is empty")
 	{
-		tdcl := TodoCreateLogic{
+		tdcl := CreateLogic{
 			Log: log,
 			UUID: mockUUIDGenerator{
 				UUID: "u-u-i-d",
@@ -52,7 +60,7 @@ func TestCreate_Validate(t *testing.T) {
 	}
 	t.Log("when Item is invalid")
 	{
-		tdcl := TodoCreateLogic{
+		tdcl := CreateLogic{
 			Log: log,
 			UUID: mockUUIDGenerator{
 				UUID: "u-u-i-d",
@@ -73,7 +81,10 @@ func TestCreate_Validate(t *testing.T) {
 	}
 	t.Log("When status is nil")
 	{
-		tdcl := TodoCreateLogic{
+		tdcl := CreateLogic{
+			DBManager: mockCreator{
+				Err: nil,
+			},
 			Log:  log,
 			UUID: mockUUIDGenerator{UUID: "u-u-i-d"},
 		}
@@ -93,7 +104,10 @@ func TestCreate_ProcessPayload(t *testing.T) {
 	log := logging.CreateAnonymousLogger("TestLogger", logging.Fatal)
 	t.Log("When request is successful, returns uuid")
 	{
-		tdcl := TodoCreateLogic{
+		tdcl := CreateLogic{
+			DBManager: mockCreator{
+				Err: nil,
+			},
 			Log: log,
 			UUID: mockUUIDGenerator{
 				UUID: "u-u-i-d",
@@ -103,8 +117,7 @@ func TestCreate_ProcessPayload(t *testing.T) {
 		req := ws.Request{}
 		res := ws.Response{}
 		ctx := context.TODO()
-		se := ws.ServiceErrors{}
-		tdcl.ProcessPayload(ctx, &se, &req, &res, &tdcr)
+		tdcl.ProcessPayload(ctx, &req, &res, &tdcr)
 		test.ExpectInt(t, res.HTTPStatus, 201)
 		expBody := map[string]string{
 			"TodoId": "u-u-i-d",
@@ -115,7 +128,10 @@ func TestCreate_ProcessPayload(t *testing.T) {
 	}
 	t.Log("When status is empty: request is successful, returns uuid")
 	{
-		tdcl := TodoCreateLogic{
+		tdcl := CreateLogic{
+			DBManager: mockCreator{
+				Err: nil,
+			},
 			Log: log,
 			UUID: mockUUIDGenerator{
 				UUID: "u-u-i-d",
@@ -126,8 +142,7 @@ func TestCreate_ProcessPayload(t *testing.T) {
 		req := ws.Request{}
 		res := ws.Response{}
 		ctx := context.TODO()
-		se := ws.ServiceErrors{}
-		tdcl.ProcessPayload(ctx, &se, &req, &res, &tdcr)
+		tdcl.ProcessPayload(ctx, &req, &res, &tdcr)
 		test.ExpectInt(t, res.HTTPStatus, 201)
 		expBody := map[string]string{
 			"TodoId": "u-u-i-d",
@@ -138,7 +153,10 @@ func TestCreate_ProcessPayload(t *testing.T) {
 	}
 	t.Log("When request is unsuccessful, returns error")
 	{
-		tdcl := TodoCreateLogic{
+		tdcl := CreateLogic{
+			DBManager: mockCreator{
+				Err: nil,
+			},
 			Log: log,
 			UUID: mockUUIDGenerator{
 				Err: fmt.Errorf("some error"),
@@ -148,11 +166,7 @@ func TestCreate_ProcessPayload(t *testing.T) {
 		req := ws.Request{}
 		res := ws.Response{}
 		ctx := context.TODO()
-		se := ws.ServiceErrors{}
-		tdcl.ProcessPayload(ctx, &se, &req, &res, &tdcr)
-		test.ExpectInt(t, se.HTTPStatus, 500)
-		test.ExpectInt(t, len(se.Errors), 1)
-		test.ExpectString(t, se.Errors[0].Message, "Error while generating TodoId")
-		test.ExpectString(t, se.Errors[0].Code, "UUID_GENERATE_FAILED")
+		tdcl.ProcessPayload(ctx, &req, &res, &tdcr)
+		test.ExpectInt(t, res.HTTPStatus, 500)
 	}
 }
