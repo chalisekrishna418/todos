@@ -2,3 +2,4 @@ bindings*
 todos
 go.sum
 *.log
+config.yaml
