@@ -2,6 +2,7 @@ package todo
 
 import (
 	"context"
+	"regexp"
 
 	"todos/pkg/uuid"
 
@@ -31,6 +32,12 @@ type CreateRequest struct {
 func (tdcl *CreateLogic) Validate(ctx context.Context, errors *ws.ServiceErrors, req *ws.Request) {
 	tc := req.RequestBody.(*CreateRequest)
 	TodoStatus := []string{"TODO", "DONE"}
+	regex := `^[a-zA-Z][a-zA-Z0-9, ]*[._-]?[a-zA-Z0-9, ]+$`
+	matched, _ := regexp.MatchString(regex, tc.Item)
+	if !matched {
+		errors.AddNewError(ws.Client, "INVALID_ITEM", "Item can contain only alphabets and numbers")
+		errors.HTTPStatus = 422
+	}
 	if tc.Item == "" {
 		errors.AddNewError(ws.Client, "EMPTY_ITEM", "Item is a required field")
 		errors.HTTPStatus = 422
