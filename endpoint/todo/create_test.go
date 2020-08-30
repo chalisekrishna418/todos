@@ -143,7 +143,7 @@ func TestCreate_ProcessPayload(t *testing.T) {
 		tdcl.ProcessPayload(ctx, &req, &res, &tdcr)
 		test.ExpectInt(t, res.HTTPStatus, 201)
 		expBody := map[string]string{
-			"TodoId": "u-u-i-d",
+			"todoId": "u-u-i-d",
 		}
 		if !reflect.DeepEqual(res.Body, expBody) {
 			t.Fatalf("Expected %v, actual %v", expBody, res.Body)
@@ -168,7 +168,7 @@ func TestCreate_ProcessPayload(t *testing.T) {
 		tdcl.ProcessPayload(ctx, &req, &res, &tdcr)
 		test.ExpectInt(t, res.HTTPStatus, 201)
 		expBody := map[string]string{
-			"TodoId": "u-u-i-d",
+			"todoId": "u-u-i-d",
 		}
 		if !reflect.DeepEqual(res.Body, expBody) {
 			t.Fatalf("Expected %v, actual %v", expBody, res.Body)

@@ -67,6 +67,6 @@ func (tdcl *CreateLogic) ProcessPayload(ctx context.Context, req *ws.Request, re
 	tdcl.DBManager.Insert("todo", td)
 	res.HTTPStatus = 201
 	res.Body = map[string]string{
-		"TodoId": uuid,
+		"todoId": uuid,
 	}
 }
