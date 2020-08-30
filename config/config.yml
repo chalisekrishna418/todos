@@ -9,3 +9,5 @@ HTTPServer:
   AccessLogging: true
   AccessLog:
     LogLinePreset: "framework"
+ApplicationLogger:
+  GlobalLogLevel: INFO
