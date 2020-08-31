@@ -5,4 +5,4 @@ test:
 	go test ./... -cover
 
 run:
-	grnc-yaml-bind && go build . && ./main -c config,env/config.yaml
+	grnc-yaml-bind && go build . && ./todos -c config,env/config.yaml
