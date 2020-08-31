@@ -8,10 +8,19 @@ components:
 
   todoCreateLogic:
     type: todo.CreateLogic
-    DBManager: ref:todosDBMgr
+    DBManager: ref:todosDBManager
     UUID: ref:googleUUID
   todoCreateHandler:
     type: handler.WsHandler
     HTTPMethod: POST
     PathPattern: "^/api/v1/create[/]?$"
     Logic: ref:todoCreateLogic
+
+  todoGetLogic:
+    type: todo.ListLogic
+    DBManager: ref:todosDBManager
+  todoGetHandler:
+    type: handler.WsHandler
+    HTTPMethod: GET
+    PathPattern: "^/api/v1/todos[/]?$"
+    Logic: ref:todoGetLogic

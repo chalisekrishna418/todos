@@ -61,6 +61,31 @@ paths:
                 internalErrorExample:
                   $ref: '#/components/examples/internalErrorExample'
 
+  /api/v1/todos:
+    get:
+      tags:
+        - Todo
+      summary: Lists Todo Items
+      description: |
+        Lists all todo items with status and Id
+      operationId: listTodoItem
+      responses:
+        200:
+          description: Return workstream info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listTodos'
+        500:
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericErrorSchema'
+              examples:
+                internalErrorExample:
+                  $ref: '#/components/examples/internalErrorExample'
+
 components:
   schemas:
     baseErrorSchema:
@@ -94,8 +119,24 @@ components:
         status:
           type: string
       example:
-        item: "complete task 1"
+        item: "Prepare swagger docs"
         status: "TODO"
+    listTodos:
+      type: object
+      properties:
+        todos:
+          type: array
+          items:
+            properties:
+              item:
+                type: string
+                example: "Prepare swagger docs"
+              status:
+                type: string
+                example: "Todo"
+              todoId:
+                type: string
+                example: "55ba71da-4c4e-49f7-a030-a4a84a48f4b1"
 
   examples:
     internalErrorExample:
