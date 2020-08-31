@@ -14,6 +14,6 @@ components:
     Password: conf:Service.Mongodb.Password
     Database: conf:Service.Mongodb.Database
 
-  todosDBMgr:
+  todosDBManager:
     type: todo.MongoDBManager
     DBMgr: ref:dbSessionManager
